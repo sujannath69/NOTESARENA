@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOTESARENA — E-Content & Digital Resources</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0e0e0e;
+    --paper: #f5f2eb;
+    --accent: #c8441b;
+    --accent2: #2563b0;
+    --gold: #d4a017;
+    --sage: #4a7c59;
+    --muted: #6b6560;
+    --border: #d9d4c8;
+    --card-bg: #faf8f3;
+
+    /* Animation tokens */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out-quad: cubic-bezier(0.45, 0, 0.55, 1);
+    --transition-base: 0.22s var(--ease-out-expo);
+    --transition-slow: 0.5s var(--ease-out-expo);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ---- NOISE TEXTURE OVERLAY ---- */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.4;
+    will-change: auto;
+  }
+
+  /* ---- NAV ---- */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 56px;
+    border-bottom: 2px solid var(--accent);
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  html { scroll-padding-top: 64px; }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--paper);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--accent); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: #aaa;
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color var(--transition-base);
+  }
+
+  .nav-links a:hover { color: var(--paper); }
+
+
+
+  /* ---- HERO ---- */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 92vh;
+    border-bottom: 1px solid var(--ink);
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    padding: 5rem 4rem 4rem 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 2px solid var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left::before {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    left: -60px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(200,68,27,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title .line-2 {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 420px;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px 28px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-block;
+    border: 2px solid var(--ink);
+    transition: color var(--transition-base);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: translateX(-101%);
+    transition: transform 0.3s var(--ease-out-expo);
+    z-index: -1;
+  }
+
+  .btn-primary:hover::after { transform: translateX(0); }
+
+  .btn-primary span { position: relative; z-index: 1; }
+
+  .btn-outline {
+    border: 2px solid var(--ink);
+    color: var(--ink);
+    padding: 12px 24px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-block;
+    transition: background var(--transition-base), color var(--transition-base);
+  }
+
+  .btn-outline:hover { background: var(--ink); color: var(--paper); }
+
+  .hero-stats {
+    display: flex;
+    gap: 2rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .stat-item { text-align: left; }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    color: var(--accent);
+    display: block;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* ---- HERO RIGHT: TOOL CARDS ---- */
+  .hero-right {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    background: var(--ink);
+  }
+
+  .hero-tool-card {
+    padding: 2.5rem;
+    border-bottom: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    transition: background var(--transition-base);
+  }
+
+  .hero-tool-card:hover { background: #161616; }
+
+  .hero-tool-card:last-child { border-bottom: none; }
+
+  .tool-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .tool-tag .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.4); }
+  }
+
+  .tool-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: #f0ece3;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+
+  .tool-desc {
+    font-size: 0.85rem;
+    color: #888;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .tool-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    transition: gap var(--transition-base), color var(--transition-base);
+    margin-top: auto;
+  }
+
+  .tool-link:hover { gap: 14px; }
+
+  .tool-link svg { transition: transform var(--transition-base); }
+
+  .tool-link:hover svg { transform: translateX(4px); }
+
+  section.hero { padding: 0; }
+
+  .featured-section { padding: 6rem 4rem; }
+  @media (max-width: 1024px) { .featured-section { padding: 4rem 2rem; } }
+  @media (max-width: 640px)  { .featured-section { padding: 2.5rem 1.25rem; } }
+
+  /* ---- TICKER ---- */
+  .ticker-wrap {
+    background: var(--accent);
+    overflow: hidden;
+    padding: 12px 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  .ticker-inner {
+    display: flex;
+    gap: 3rem;
+    width: max-content;
+    animation: ticker 40s linear infinite;
+    will-change: transform;
+  }
+
+  .ticker-wrap:hover .ticker-inner {
+    animation-play-state: paused;
+  }
+
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .ticker-item {
+    white-space: nowrap;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .ticker-item::after {
+    content: '◆';
+    font-size: 0.5rem;
+    opacity: 0.6;
+  }
+
+  /* ---- SECTION BASE ---- */
+  section { padding: 6rem 4rem; }
+
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .section-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 3vw, 3rem);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .section-title em {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .see-all {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 2px;
+    transition: color var(--transition-base), border-color var(--transition-base);
+    white-space: nowrap;
+  }
+
+  .see-all:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ---- FEATURED POSTS ---- */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--ink);
+  }
+
+  .post-card {
+    padding: 2rem;
+    border-right: 1px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: background var(--transition-base);
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .post-card:last-child { border-right: none; }
+
+  .post-card:hover { background: var(--ink); }
+
+  .post-card:hover .post-title,
+  .post-card:hover .post-date,
+  .post-card:hover .post-excerpt { color: var(--paper); }
+
+  .post-card:hover .post-tag { background: var(--accent); color: var(--paper); }
+
+  .post-card.featured {
+    border-right: 1px solid var(--ink);
+    background: var(--card-bg);
+    position: relative;
+  }
+
+  .post-card.featured::before { content: none; }
+
+  .featured-badge {
+    display: inline-block;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    padding: 3px 8px;
+    margin-left: 8px;
+    vertical-align: middle;
+    line-height: 1;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .post-tag-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-bottom: 1rem;
+  }
+
+  .post-tag-row .post-tag {
+    margin-bottom: 0;
+  }
+
+  .post-tag {
+    display: inline-block;
+    font-size: 0.63rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--border);
+    padding: 4px 10px;
+    margin-bottom: 1rem;
+    transition: all 0.2s;
+  }
+
+  .post-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+    transition: color 0.2s;
+    color: var(--ink);
+  }
+
+  .post-card.featured .post-title { font-size: clamp(1.2rem, 4vw, 1.6rem); color: var(--ink); }
+
+  .post-excerpt {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    transition: color 0.2s;
+  }
+
+  .post-date {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    transition: color 0.2s;
+  }
+
+  /* ---- SUBJECTS GRID ---- */
+  .subjects-section {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 6rem 4rem;
+  }
+
+  .subjects-section .section-title { color: var(--paper); }
+
+  .subjects-section .section-eyebrow { color: var(--gold); }
+
+  .subjects-section .section-header { border-bottom-color: #333; }
+
+  .subjects-section .see-all { color: var(--paper); border-color: var(--paper); }
+
+  .subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    border: 1px solid #333;
+  }
+
+  .subject-card {
+    padding: 1.75rem 1.5rem;
+    border-right: 1px solid #333;
+    border-bottom: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--paper);
+    transition: background var(--transition-base), transform var(--transition-base);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .subject-card:hover {
+    background: #1a1a1a;
+    transform: translateY(-2px);
+  }
+
+  .subject-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s var(--ease-out-expo);
+  }
+
+  .subject-card:hover::before { transform: scaleX(1); }
+
+  .subject-icon {
+    width: 42px;
+    height: 42px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    transition: transform 0.3s var(--ease-out-expo), background 0.3s;
+  }
+
+  .subject-card:hover .subject-icon {
+    transform: scale(1.15) rotate(-6deg);
+    background: rgba(200,68,27,0.18);
+    color: var(--accent);
+  }
+
+  .subject-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    line-height: 1.3;
+  }
+
+  .subject-level {
+    font-size: 0.68rem;
+    color: #666;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ---- AI TOOLS STRIP ---- */
+  .tools-section {
+    padding: 6rem 4rem;
+    background: var(--card-bg);
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid var(--ink);
+    margin-top: 3rem;
+  }
+
+  .tool-card {
+    padding: 2rem 1.75rem;
+    border-right: 1px solid var(--ink);
+    position: relative;
+    overflow: hidden;
+    transition: background var(--transition-base);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tool-card:last-child { border-right: none; }
+
+  .tool-card:hover { background: var(--accent); }
+
+  .tool-card:hover .tool-num,
+  .tool-card:hover .tool-title,
+  .tool-card:hover .tool-body,
+  .tool-card:hover .tool-action { color: var(--paper); }
+
+  .tool-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 3.5rem;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 1rem;
+    transition: color 0.2s;
+  }
+
+  .tool-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    transition: color 0.2s;
+  }
+
+  .tool-body {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.6;
+    transition: color 0.2s;
+  }
+
+  .tool-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    margin-top: 1.25rem;
+    transition: gap 0.2s, color 0.2s;
+  }
+
+  .tool-action:hover { gap: 12px; }
+
+  /* ---- RECENT POSTS LIST ---- */
+  .recent-section { padding: 6rem 4rem; }
+
+  .recent-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--ink);
+  }
+
+  .recent-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+    padding: 1.75rem 2rem;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    align-items: start;
+    text-decoration: none;
+    color: inherit;
+    transition: background var(--transition-base);
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .recent-item:hover { background: var(--card-bg); }
+
+  .recent-item:nth-child(even) { border-right: none; }
+
+  .recent-item:nth-last-child(-n+2) { border-bottom: none; }
+
+  .recent-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--border);
+    line-height: 1;
+    padding-top: 2px;
+  }
+
+  .recent-content { display: flex; flex-direction: column; gap: 4px; }
+
+  .recent-tag {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .recent-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.35;
+  }
+
+  .recent-meta {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ---- EXAM PREP BANNER ---- */
+  .exam-banner {
+    margin: 0 4rem;
+    background: var(--accent2);
+    padding: 3rem 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    border: 2px solid var(--ink);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .exam-banner-left { flex: 1; }
+
+  .exam-banner-tag {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .exam-banner-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.8rem;
+    color: #fff;
+    line-height: 1.1;
+  }
+
+  .exam-banner-sub {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.75);
+    margin-top: 0.5rem;
+  }
+
+  .exam-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1.25rem;
+  }
+
+  .exam-tag-pill {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 5px 12px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .exam-banner .btn-primary {
+    background: var(--paper);
+    color: var(--ink);
+    border-color: var(--paper);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ---- ABOUT STRIP ---- */
+  .about-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 2px solid var(--ink);
+    margin-top: 6rem;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .about-left {
+    padding: 5rem 4rem;
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .about-right {
+    padding: 5rem 4rem;
+    background: var(--accent);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .about-eyebrow { color: var(--gold); }
+
+  .about-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.6rem, 5vw, 2.5rem);
+    color: var(--paper);
+    line-height: 1.05;
+    margin: 0.75rem 0 1.25rem;
+    word-break: break-word;
+  }
+
+  .about-body {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.75;
+  }
+
+  .about-right-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--paper);
+    margin-bottom: 1rem;
+  }
+
+  .about-right-body {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+
+
+  /* ---- FOOTER ---- */
+  footer {
+    background: var(--ink);
+    border-top: 2px solid var(--accent);
+    padding: 3rem 4rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 3rem;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .footer-brand .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--paper);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-brand .logo span { color: var(--accent); }
+
+  .footer-desc {
+    font-size: 0.82rem;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  .footer-col-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--paper);
+    margin-bottom: 1rem;
+  }
+
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .footer-links a {
+    font-size: 0.82rem;
+    color: #666;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--paper); }
+
+  .footer-bottom {
+    grid-column: 1 / -1;
+    border-top: 1px solid #222;
+    padding-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-bottom p {
+    font-size: 0.75rem;
+    color: #555;
+  }
+
+  .footer-bottom a { color: var(--accent); text-decoration: none; }
+
+  /* ---- SCROLL ANIMATIONS ---- */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.65s var(--ease-out-expo), transform 0.65s var(--ease-out-expo);
+    will-change: opacity, transform;
+  }
+
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+    will-change: auto;
+  }
+
+  .subjects-grid.visible .subject-card,
+  .tools-grid.visible .tool-card,
+  .posts-grid.visible .post-card,
+  .recent-list.visible .recent-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: stagger-fade-up 0.5s var(--ease-out-expo) forwards;
+  }
+
+  @keyframes stagger-fade-up {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .subjects-grid.visible .subject-card:nth-child(1),
+  .tools-grid.visible .tool-card:nth-child(1),
+  .posts-grid.visible .post-card:nth-child(1),
+  .recent-list.visible .recent-item:nth-child(1)  { animation-delay: 0.05s; }
+  .subjects-grid.visible .subject-card:nth-child(2),
+  .tools-grid.visible .tool-card:nth-child(2),
+  .posts-grid.visible .post-card:nth-child(2),
+  .recent-list.visible .recent-item:nth-child(2)  { animation-delay: 0.12s; }
+  .subjects-grid.visible .subject-card:nth-child(3),
+  .tools-grid.visible .tool-card:nth-child(3),
+  .posts-grid.visible .post-card:nth-child(3),
+  .recent-list.visible .recent-item:nth-child(3)  { animation-delay: 0.19s; }
+  .subjects-grid.visible .subject-card:nth-child(4),
+  .tools-grid.visible .tool-card:nth-child(4),
+  .recent-list.visible .recent-item:nth-child(4)  { animation-delay: 0.26s; }
+  .subjects-grid.visible .subject-card:nth-child(5),
+  .recent-list.visible .recent-item:nth-child(5)  { animation-delay: 0.33s; }
+  .subjects-grid.visible .subject-card:nth-child(6),
+  .recent-list.visible .recent-item:nth-child(6)  { animation-delay: 0.4s; }
+  .subjects-grid.visible .subject-card:nth-child(7)  { animation-delay: 0.47s; }
+  .subjects-grid.visible .subject-card:nth-child(8)  { animation-delay: 0.54s; }
+  .subjects-grid.visible .subject-card:nth-child(9)  { animation-delay: 0.58s; }
+  .subjects-grid.visible .subject-card:nth-child(10) { animation-delay: 0.62s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fade-up,
+    .subjects-grid.visible .subject-card,
+    .tools-grid.visible .tool-card,
+    .posts-grid.visible .post-card,
+    .recent-list.visible .recent-item {
+      opacity: 1;
+      transform: none;
+      animation: none;
+      transition: none;
+      will-change: auto;
+    }
+    .ticker-inner { animation-duration: 80s; }
+  }
+
+  /* ---- MOBILE HAMBURGER BUTTON ---- */
+  .nav-hamburger {
+    display: none;
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5.5px;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 1.5px solid rgba(255,255,255,0.18);
+    border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+    z-index: 401;
+    flex-shrink: 0;
+    position: relative;
+    transition: background var(--transition-base), border-color var(--transition-base);
+    touch-action: manipulation;
+  }
+  .nav-hamburger:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.35);
+  }
+  .nav-hamburger span {
+    width: 24px;
+    height: 2.5px;
+    background: #ffffff;
+    display: block;
+    border-radius: 2px;
+    transition: transform 0.32s var(--ease-out-expo), opacity 0.22s ease;
+    transform-origin: center;
+    pointer-events: none;
+  }
+  .nav-hamburger.open { border-color: var(--accent); background: rgba(200,68,27,0.12); }
+  .nav-hamburger.open span { background: #ffffff; }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+  /* ---- MOBILE DRAWER OVERLAY ---- */
+  .mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0);
+    z-index: 299;
+    pointer-events: none;
+    transition: background 0.3s var(--ease-in-out-quad);
+  }
+  .mobile-overlay.open {
+    background: rgba(0,0,0,0.55);
+    pointer-events: all;
+  }
+
+  /* ---- MOBILE HAMBURGER BUTTON ---- */
+  .nav-hamburger {
+    display: none;
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5.5px;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 1.5px solid rgba(255,255,255,0.18);
+    border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+    z-index: 401;
+    flex-shrink: 0;
+    position: relative;
+    transition: background var(--transition-base), border-color var(--transition-base);
+    touch-action: manipulation;
+  }
+  .nav-hamburger:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.35);
+  }
+  .nav-hamburger span {
+    width: 24px;
+    height: 2.5px;
+    background: #ffffff;
+    display: block;
+    border-radius: 2px;
+    transition: transform 0.32s var(--ease-out-expo), opacity 0.22s ease;
+    transform-origin: center;
+    pointer-events: none;
+  }
+  .nav-hamburger.open { border-color: var(--accent); background: rgba(200,68,27,0.12); }
+  .nav-hamburger.open span { background: #ffffff; }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+  /* ---- RESPONSIVE ---- */
+  @media (min-width: 1025px) {
+    .nav-links {
+      display: flex !important;
+      position: static !important;
+      flex-direction: row !important;
+      transform: none !important;
+      visibility: visible !important;
+      width: auto !important;
+      height: auto !important;
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      overflow: visible !important;
+      gap: 2rem !important;
+    }
+    .nav-links li { width: auto !important; }
+    .nav-links a {
+      display: inline-flex !important;
+      padding: 0 !important;
+      border: none !important;
+      font-size: 0.78rem !important;
+      color: #aaa !important;
+      min-height: auto !important;
+    }
+    .nav-links a:hover { background: transparent !important; }
+    .nav-hamburger { display: none !important; }
+    .mobile-overlay { display: none !important; pointer-events: none !important; }
+  }
+
+  @media (max-width: 1024px) {
+    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-left { padding: 4rem 2rem; border-right: none; border-bottom: 2px solid var(--ink); }
+    .hero-right { grid-template-rows: auto; grid-template-columns: 1fr 1fr; }
+    .hero-tool-card { border-bottom: none; border-right: 1px solid #222; }
+    .hero-tool-card:last-child { border-right: none; }
+    .posts-grid { grid-template-columns: 1fr; }
+    .post-card { border-right: none; border-bottom: 1px solid var(--ink); }
+    .post-card:last-child { border-bottom: none; }
+    .subjects-grid { grid-template-columns: repeat(3, 1fr); }
+
+    .tools-grid { grid-template-columns: repeat(2, 1fr); }
+    .tools-grid .tool-card { border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+    .tools-grid .tool-card:nth-child(2n) { border-right: none; }
+    .tools-grid .tool-card:nth-last-child(-n+2):nth-child(odd),
+    .tools-grid .tool-card:last-child { border-bottom: none; }
+
+    .recent-list { grid-template-columns: 1fr; }
+    .recent-item { border-right: none !important; }
+    .recent-item:nth-last-child(-n+2) { border-bottom: 1px solid var(--border); }
+    .recent-item:last-child { border-bottom: none; }
+    .exam-banner { margin: 0 2rem; flex-direction: column; align-items: flex-start; }
+    .about-strip { grid-template-columns: 1fr; }
+    footer { grid-template-columns: 1fr 1fr; }
+    section { padding: 4rem 2rem; }
+    .recent-section, .tools-section { padding: 4rem 2rem; }
+    section, .tools-section, .recent-section, .subjects-section { width: 100%; box-sizing: border-box; overflow-x: hidden; }
+    .posts-grid, .tools-grid, .subjects-grid, .recent-list { width: 100%; box-sizing: border-box; }
+
+    .nav-links {
+      display: flex;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(280px, 78vw);
+      background: #0e0e0e;
+      flex-direction: column;
+      gap: 0;
+      padding: 80px 0 2rem;
+      z-index: 400;
+      border-left: 2px solid var(--accent);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      transform: translateX(110%);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  visibility 0s linear 0.35s;
+      list-style: none;
+      visibility: hidden;
+    }
+    .nav-links.open {
+      transform: translateX(0);
+      visibility: visible;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  visibility 0s linear 0s;
+    }
+    .nav-links li { width: 100%; }
+    .nav-links a {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.75rem;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid #222;
+      color: #bbb;
+      min-height: 44px;
+    }
+    .nav-links a:hover { color: #fff; background: #1a1a1a; }
+    .nav-links a:active { background: #252525; }
+    .nav-hamburger { display: flex; }
+  }
+
+  @media (max-width: 640px) {
+    nav { padding: 0 1rem; height: 56px; }
+    .nav-logo { font-size: 1rem; }
+    .hero-left { padding: 2rem 1.25rem; }
+    .hero-right { grid-template-columns: 1fr; }
+    .hero-tool-card { border-right: none !important; border-bottom: 1px solid #222; }
+    .hero-tool-card:last-child { border-bottom: none; }
+    .hero-title { font-size: clamp(2.2rem, 9vw, 3.2rem); }
+    .hero-sub { font-size: 0.95rem; }
+
+    .subjects-grid { grid-template-columns: repeat(2, 1fr); }
+    .subjects-section { padding: 2.5rem 1.25rem; }
+
+    .tools-grid { grid-template-columns: 1fr; }
+    .tools-grid .tool-card { border-right: none; border-bottom: 1px solid var(--ink); }
+    .tools-grid .tool-card:last-child { border-bottom: none; }
+
+    footer { grid-template-columns: 1fr; padding: 2.5rem 1.25rem 1.5rem; }
+    .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
+
+    .exam-banner { margin: 0; padding: 1.75rem 1.25rem; border-left: none; border-right: none; }
+
+    .about-strip { margin-top: 3rem; }
+    .about-left, .about-right { padding: 2.5rem 1.25rem; }
+    .about-title { font-size: clamp(1.5rem, 7vw, 2rem); }
+    .about-body { font-size: 0.88rem; line-height: 1.7; }
+    .about-right-title { font-size: 1.2rem; }
+    .about-right-body { font-size: 0.85rem; }
+
+    section,
+    .recent-section,
+    .tools-section { padding: 2.5rem 1.25rem; }
+
+    .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .section-title { font-size: clamp(1.6rem, 7vw, 2.2rem); }
+    .hero-stats { gap: 1.25rem; flex-wrap: wrap; }
+    .hero-actions { flex-direction: column; align-items: flex-start; }
+
+    .btn-primary, .btn-outline {
+      width: 100%;
+      text-align: center;
+      box-sizing: border-box;
+      justify-content: center;
+    }
+
+    .ticker-item { font-size: 0.68rem; }
+    .post-card { padding: 1.5rem 1.25rem; }
+    .post-card.featured .post-title { font-size: 1.3rem; }
+    .post-tag-row { margin-bottom: 0.75rem; }
+    .tool-card { padding: 1.5rem 1.25rem; }
+    .tool-num { font-size: 2.5rem; }
+    .hero-tool-card { padding: 1.75rem 1.25rem; }
+    .subject-card { padding: 1.25rem 1rem; }
+    .recent-item { padding: 1.25rem 1rem; gap: 1rem; }
+    .stat-num { font-size: 1.6rem; }
+  }
+
+  @media (max-width: 420px) {
+    .subjects-grid { grid-template-columns: 1fr 1fr; }
+    .hero-title { font-size: clamp(1.9rem, 8vw, 2.4rem); }
+    .exam-tags { gap: 0.35rem; }
+    .exam-tag-pill { font-size: 0.62rem; padding: 4px 8px; }
+    .hero-stats .stat-item { min-width: 60px; }
+    .subjects-grid { grid-template-columns: 1fr 1fr; }
+    .subject-card { padding: 1rem 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MOBILE OVERLAY -->
+<div class="mobile-overlay" id="mobileOverlay"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">NOTES<span>ARENA</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#subjects" class="nav-close-link">Subjects</a></li>
+    <li><a href="#tools" class="nav-close-link">AI Tools</a></li>
+    <li><a href="#exam-prep" class="nav-close-link">Exam Prep</a></li>
+    <li><a href="#about" class="nav-close-link">About</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburgerBtn" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" aria-label="Hero">
+  <div class="hero-left">
+    <span class="hero-eyebrow">E-Content & Digital Resources</span>
+    <h1 class="hero-title">
+      Teaching<br>
+      <em class="line-2">Reimagined</em><br>
+      Digitally
+    </h1>
+    <p class="hero-sub">Your complete resource hub for K-12 digital education — subject notes, AI-powered lesson plans, NCERT solutions, and competitive exam prep, all in one place.</p>
+    <div class="hero-actions">
+      <a href="#subjects" class="btn-primary"><span>Explore Resources →</span></a>
+      <a href="#tools" class="btn-outline">AI Tools</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">20+</span>
+        <span class="stat-label">Subjects</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">VI–XII</span>
+        <span class="stat-label">All Classes</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">Free</span>
+        <span class="stat-label">Open Access</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-tool-card">
+      <div>
+        <div class="tool-tag"><span class="dot"></span> Live Tool</div>
+        <div class="tool-name">Lesson Plan<br>Creator</div>
+        <p class="tool-desc">Generate KVS-format lesson plans in seconds. Just enter class, subject & chapter.</p>
+      </div>
+      <a href="https://gemini.google.com/gem/1z9cUUVqvd5MW7C6uWcQLcutu0-AM17R7?usp=sharing" target="_blank" class="tool-link">
+        Try Now
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="hero-tool-card">
+      <div>
+        <div class="tool-tag"><span class="dot"></span> Live Tool</div>
+        <div class="tool-name">NCERT Solutions<br>Generator</div>
+        <p class="tool-desc">Instant NCERT solutions — provide class, subject and chapter name to generate.</p>
+      </div>
+      <a href="https://gemini.google.com/gem/1Pc2mNMemdmjBrXzJPmaAxnH-hRY0jc3x?usp=sharing" target="_blank" class="tool-link">
+        Generate Now
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <span class="ticker-item">Biology XI-XII</span>
+    <span class="ticker-item">Physics XI-XII</span>
+    <span class="ticker-item">Chemistry XI-XII</span>
+    <span class="ticker-item">Maths VI-XII</span>
+    <span class="ticker-item">Science VI-X</span>
+    <span class="ticker-item">DSSSB Prep</span>
+    <span class="ticker-item">KVS Study Material</span>
+    <span class="ticker-item">NVS Resources</span>
+    <span class="ticker-item">CBSE Digital Evaluation</span>
+    <span class="ticker-item">Worksheet Generator</span>
+    <span class="ticker-item">Chapter Test Generator</span>
+    <span class="ticker-item">Competency Based Education</span>
+    <!-- Duplicate for seamless scroll -->
+    <span class="ticker-item">Biology XI-XII</span>
+    <span class="ticker-item">Physics XI-XII</span>
+    <span class="ticker-item">Chemistry XI-XII</span>
+    <span class="ticker-item">Maths VI-XII</span>
+    <span class="ticker-item">Science VI-X</span>
+    <span class="ticker-item">DSSSB Prep</span>
+    <span class="ticker-item">KVS Study Material</span>
+    <span class="ticker-item">NVS Resources</span>
+    <span class="ticker-item">CBSE Digital Evaluation</span>
+    <span class="ticker-item">Worksheet Generator</span>
+    <span class="ticker-item">Chapter Test Generator</span>
+    <span class="ticker-item">Competency Based Education</span>
+  </div>
+</div>
+
+<!-- FEATURED POSTS -->
+<section class="featured-section">
+  <div class="section-header fade-up">
+    <div>
+      <span class="section-eyebrow">Latest Updates</span>
+      <h2 class="section-title">Recent <em>Posts</em></h2>
+    </div>
+    <a href="https://ictsciencerekha.blogspot.com" target="_blank" class="see-all">View All Posts →</a>
+  </div>
+
+  <div class="posts-grid fade-up">
+    <a href="https://ictsciencerekha.blogspot.com/2026/04/ncert-solutions-generator.html" target="_blank" class="post-card featured">
+      <div>
+        <div class="post-tag-row">
+          <span class="post-tag">AI Tool · April 8, 2026</span>
+          <span class="featured-badge">Featured</span>
+        </div>
+        <div class="post-title">NCERT Solutions Generator — Generate Full Solutions Within Seconds</div>
+        <p class="post-excerpt">A powerful AI-driven tool that generates complete NCERT solutions instantly. Simply mention the class, subject, and chapter name to get comprehensive answers with explanations.</p>
+      </div>
+      <span class="post-date">April 8, 2026 · 1 comment</span>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/2026/04/chapter-test-generator.html" target="_blank" class="post-card">
+      <div>
+        <span class="post-tag">Worksheet · April 5</span>
+        <div class="post-title">Chapter Test Generator — Create Tests in Seconds</div>
+        <p class="post-excerpt">Specify 6 parameters including class, subject, chapter, and test type to generate custom chapter tests instantly.</p>
+      </div>
+      <span class="post-date">April 5, 2026 · 1 comment</span>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/2026/04/lesson-plan-creator-i-xii.html" target="_blank" class="post-card">
+      <div>
+        <span class="post-tag">Lesson Plan · April 3</span>
+        <div class="post-title">Lesson Plan Creator — KVS Format (Classes I–XII)</div>
+        <p class="post-excerpt">KVS Lesson Plan Organizer format. Enter class, subject, and chapter number to create a complete lesson plan.</p>
+      </div>
+      <span class="post-date">April 3, 2026</span>
+    </a>
+  </div>
+</section>
+
+<!-- SUBJECTS GRID -->
+<section class="subjects-section" id="subjects">
+  <div class="section-header fade-up">
+    <div>
+      <span class="section-eyebrow">Browse by Subject</span>
+      <h2 class="section-title" style="color:var(--paper)">All <em>Subjects</em></h2>
+    </div>
+    <a href="https://ictsciencerekha.blogspot.com" target="_blank" class="see-all" style="color:var(--paper); border-color:var(--paper);">All Resources →</a>
+  </div>
+
+  <div class="subjects-grid fade-up">
+    <a href="https://ictsciencerekha.blogspot.com/p/ict-tool-webinar-ncert.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6 2 4 7 4 10c0 4 3 6 5 7.5S12 22 12 22s3-1 5-2.5 5-3.5 5-7.5c0-3-2-8-8-8z"/><path d="M12 2v20M4 10h16"/></svg></div>
+      <div class="subject-name">Biology</div>
+      <div class="subject-level">Classes XI – XII</div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/p/class-xii-physics.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke-dasharray="3 3"/><path d="M2 12h4M18 12h4M12 2v4M12 18v4"/></svg></div>
+      <div class="subject-name">Physics</div>
+      <div class="subject-level">Classes XI – XII</div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/p/chemistry-xi-xii.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L6 20h12L14 9V3"/><circle cx="8" cy="16" r="1" fill="currentColor"/><circle cx="13" cy="13" r="1" fill="currentColor"/><circle cx="16" cy="18" r="1" fill="currentColor"/></svg></div>
+      <div class="subject-name">Chemistry</div>
+      <div class="subject-level">Classes XI – XII</div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/p/political-science.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="1"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1.5" fill="currentColor"/></svg></div>
+      <div class="subject-name">Political Science</div>
+      <div class="subject-level">Classes XI – XII</div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/p/geography.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg></div>
+      <div class="subject-name">Geography</div>
+      <div class="subject-level">Classes XI – XII</div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/p/class-xii-economics.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <div class="subject-name">History</div>
+      <div class="subject-level">Classes XI – XII</div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/p/cs-ip.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="19" y1="12" x2="5" y2="12" stroke-dasharray="2 2"/></svg></div>
+      <div class="subject-name">CS & IP</div>
+      <div class="subject-level">Classes XI – XII</div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/p/current-affairs.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+      <div class="subject-name">Economics</div>
+      <div class="subject-level">Classes XI – XII</div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/p/class-vi-maths.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="7" x2="9" y2="7"/><line x1="15" y1="17" x2="19" y2="17"/><line x1="5" y1="17" x2="9" y2="17"/></svg></div>
+      <div class="subject-name">Mathematics</div>
+      <div class="subject-level">Classes VI – XII</div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/p/class-viii-hindi.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16"/><path d="M7 5v8a5 5 0 0 0 10 0V5"/><path d="M12 5v14"/><circle cx="12" cy="21" r="1" fill="currentColor"/></svg></div>
+      <div class="subject-name">Hindi</div>
+      <div class="subject-level">Classes VI – XII</div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/p/class-vi-viii-english.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg></div>
+      <div class="subject-name">English</div>
+      <div class="subject-level">Classes VI – XII</div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/p/science-vi-x.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L6 20h12L14 9V3"/><circle cx="9" cy="15" r="1" fill="currentColor"/><circle cx="14" cy="12" r="1" fill="currentColor"/><circle cx="11" cy="18" r="1" fill="currentColor"/></svg></div>
+      <div class="subject-name">Science</div>
+      <div class="subject-level">Classes VI – X</div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/p/class-vi-viii-social-science.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg></div>
+      <div class="subject-name">Social Science</div>
+      <div class="subject-level">Classes VI – X</div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/p/ict-tool-of-day-may-2022.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><path d="M12 7v8"/><path d="M9 14l-2 4M15 14l2 4"/><path d="M8 11l4 2 4-2"/></svg></div>
+      <div class="subject-name">Physical Education</div>
+      <div class="subject-level">Classes XI – XII</div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/p/class-viii-sanskrit.html" target="_blank" class="subject-card">
+      <div class="subject-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C8 3 5 6 5 9c0 2.5 1.5 4.5 4 5.5V18h6v-3.5c2.5-1 4-3 4-5.5 0-3-3-6-7-6z"/><path d="M9 21h6"/><path d="M7 3h10"/></svg></div>
+      <div class="subject-name">Sanskrit</div>
+      <div class="subject-level">Classes VI – X</div>
+    </a>
+  </div>
+</section>
+
+<!-- AI TOOLS -->
+<section class="tools-section" id="tools">
+  <div class="section-header fade-up">
+    <div>
+      <span class="section-eyebrow">Powered by AI</span>
+      <h2 class="section-title">Smart <em>Tools</em> for Teachers</h2>
+    </div>
+  </div>
+  <div class="tools-grid fade-up">
+    <div class="tool-card">
+      <div class="tool-num">01</div>
+      <div class="tool-title">Lesson Plan Creator</div>
+      <p class="tool-body">Generate complete KVS-format lesson plans by providing class, subject & chapter number. Done in seconds.</p>
+      <a href="https://gemini.google.com/gem/1z9cUUVqvd5MW7C6uWcQLcutu0-AM17R7?usp=sharing" target="_blank" class="tool-action">Try it <svg width="12" height="12" viewBox="0 0 14 14" fill="none" style="display:inline-block;vertical-align:middle;margin-left:2px"><path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+    <div class="tool-card">
+      <div class="tool-num">02</div>
+      <div class="tool-title">Worksheet Generator</div>
+      <p class="tool-body">Create worksheets instantly. Mention class, subject & chapter name. Join WhatsApp group for e-content.</p>
+      <a href="https://gemini.google.com/gem/1wbXygkyNbHX05X9IlpnN2rs-BPZEGk0X?usp=sharing" target="_blank" class="tool-action">Try it <svg width="12" height="12" viewBox="0 0 14 14" fill="none" style="display:inline-block;vertical-align:middle;margin-left:2px"><path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+    <div class="tool-card">
+      <div class="tool-num">03</div>
+      <div class="tool-title">Chapter Test Generator</div>
+      <p class="tool-body">Build tests from scratch in seconds. Specify 6 parameters including test type and difficulty level.</p>
+      <a href="https://gemini.google.com/gem/1mkHUb23Tn1YuZW3LT-R4Lr_-24fAulaU?usp=sharing" target="_blank" class="tool-action">Try it <svg width="12" height="12" viewBox="0 0 14 14" fill="none" style="display:inline-block;vertical-align:middle;margin-left:2px"><path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+    <div class="tool-card">
+      <div class="tool-num">04</div>
+      <div class="tool-title">NCERT Solutions Generator</div>
+      <p class="tool-body">Get complete NCERT solutions for any class, subject and chapter — generated on demand, accurately.</p>
+      <a href="https://gemini.google.com/gem/1Pc2mNMemdmjBrXzJPmaAxnH-hRY0jc3x?usp=sharing" target="_blank" class="tool-action">Try it <svg width="12" height="12" viewBox="0 0 14 14" fill="none" style="display:inline-block;vertical-align:middle;margin-left:2px"><path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- RECENT POSTS LIST -->
+<section class="recent-section">
+  <div class="section-header fade-up">
+    <div>
+      <span class="section-eyebrow">More Resources</span>
+      <h2 class="section-title">Recent <em>Updates</em></h2>
+    </div>
+    <a href="https://ictsciencerekha.blogspot.com" target="_blank" class="see-all">All Posts →</a>
+  </div>
+
+  <div class="recent-list fade-up">
+    <a href="https://ictsciencerekha.blogspot.com/2026/03/class-readiness-module-2026-27-iii-ix.html" target="_blank" class="recent-item">
+      <span class="recent-num">01</span>
+      <div class="recent-content">
+        <span class="recent-tag">KVS / Class Readiness</span>
+        <div class="recent-title">Class Readiness Module 2026-27 (Classes III–IX)</div>
+        <div class="recent-meta">March 27, 2026</div>
+      </div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/2026/03/class-ix-gateway-to-assignment-english.html" target="_blank" class="recent-item">
+      <span class="recent-num">02</span>
+      <div class="recent-content">
+        <span class="recent-tag">Class IX · English</span>
+        <div class="recent-title">Gateway to Assignment — English Language & Literature</div>
+        <div class="recent-meta">March 25, 2026</div>
+      </div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/2026/03/final-instructions-faqs-cbse-digital.html" target="_blank" class="recent-item">
+      <span class="recent-num">03</span>
+      <div class="recent-content">
+        <span class="recent-tag">CBSE · Digital Evaluation</span>
+        <div class="recent-title">Final Instructions & FAQs — CBSE Digital Evaluation Class XII</div>
+        <div class="recent-meta">March 10, 2026 · 1 comment</div>
+      </div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/2026/03/notes-mcq-teaching-post-kvs-nvs-emrs.html" target="_blank" class="recent-item">
+      <span class="recent-num">04</span>
+      <div class="recent-content">
+        <span class="recent-tag">Exam Prep · KVS/NVS</span>
+        <div class="recent-title">Notes & MCQ for Teaching Posts — PGT Biology, Chemistry, Commerce & more</div>
+        <div class="recent-meta">March 5, 2026</div>
+      </div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/2026/02/keywords-exam-revision-class-x-hindi.html" target="_blank" class="recent-item">
+      <span class="recent-num">05</span>
+      <div class="recent-content">
+        <span class="recent-tag">Class X · Hindi</span>
+        <div class="recent-title">Keywords for Exam Revision — Class X Hindi Course A & B</div>
+        <div class="recent-meta">February 28, 2026</div>
+      </div>
+    </a>
+    <a href="https://ictsciencerekha.blogspot.com/2026/02/last-minute-revision-material-class-xii.html" target="_blank" class="recent-item">
+      <span class="recent-num">06</span>
+      <div class="recent-content">
+        <span class="recent-tag">Class IX · Science</span>
+        <div class="recent-title">Common Mistakes Committed by Students — Science</div>
+        <div class="recent-meta">February 23, 2026 · 1 comment</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- EXAM PREP BANNER -->
+<div class="exam-banner fade-up" id="exam-prep">
+  <div class="exam-banner-left">
+    <span class="exam-banner-tag">Competitive Exam Preparation</span>
+    <div class="exam-banner-title">DSSSB · KVS · NVS · EMRS<br>Study Materials</div>
+    <p class="exam-banner-sub">Curated notes, previous year papers, mock tests and question banks for teacher recruitment exams.</p>
+    <div class="exam-tags">
+      <span class="exam-tag-pill">PGT</span>
+      <span class="exam-tag-pill">TGT</span>
+      <span class="exam-tag-pill">PRT</span>
+      <span class="exam-tag-pill">Principal / VP</span>
+      <span class="exam-tag-pill">CTET</span>
+    </div>
+  </div>
+  <a href="https://ictsciencerekha.blogspot.com/p/exam-preparation-dsssb-kvs-nvs-ctet-misc.html" target="_blank" class="btn-primary"><span>Explore Prep Material →</span></a>
+</div>
+
+<!-- ABOUT -->
+<div class="about-strip" id="about">
+  <div class="about-left">
+    <span class="section-eyebrow about-eyebrow">Who We Are</span>
+    <h2 class="about-title">Sharing Knowledge,<br>Empowering <em style="color:var(--accent);font-family:'Playfair Display',serif;font-style:italic;">Teachers</em></h2>
+    <p class="about-body">NOTESARENA is an open educational resource platform run by Student Union, dedicated to sharing e-content and digital resources for K-12 educators across India. From subject notes and PowerPoint presentations to AI-powered tools and exam preparation materials — everything is free and accessible to all teachers and students.</p>
+  </div>
+  <div class="about-right">
+    <div class="about-right-title">Connect & Stay Updated</div>
+    <p class="about-right-body">All updates, new resources, AI tools, exam prep materials, and subject notes are available right here on this website.</p>
+    <p class="about-right-body">Visit regularly to stay updated. Everything is 100% free and open access — no login, no subscription required.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <a href="#" class="logo">NOTES<span>ARENA</span></a>
+    <p class="footer-desc">An open platform for sharing e-content and digital resources for K-12 educators. By Student Union.</p>
+  </div>
+
+  <div>
+    <div class="footer-col-title">Senior Secondary</div>
+    <ul class="footer-links">
+      <li><a href="https://ictsciencerekha.blogspot.com/p/ict-tool-webinar-ncert.html" target="_blank">Biology (XI–XII)</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/p/class-xii-physics.html" target="_blank">Physics (XI–XII)</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/p/chemistry-xi-xii.html" target="_blank">Chemistry (XI–XII)</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/p/class-vi-maths.html" target="_blank">Mathematics (XI–XII)</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/p/cs-ip.html" target="_blank">CS & IP (XI–XII)</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/p/current-affairs.html" target="_blank">Economics (XI–XII)</a></li>
+    </ul>
+  </div>
+
+  <div>
+    <div class="footer-col-title">Middle & Secondary</div>
+    <ul class="footer-links">
+      <li><a href="https://ictsciencerekha.blogspot.com/p/class-vi-maths.html" target="_blank">Maths (VI–XII)</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/p/science-vi-x.html" target="_blank">Science (VI–X)</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/p/class-vi-viii-social-science.html" target="_blank">Social Science (VI–X)</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/p/class-viii-hindi.html" target="_blank">Hindi (VI–XII)</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/p/class-vi-viii-english.html" target="_blank">English (VI–XII)</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/p/class-viii-sanskrit.html" target="_blank">Sanskrit (VI–X)</a></li>
+    </ul>
+  </div>
+
+  <div>
+    <div class="footer-col-title">Exam Prep</div>
+    <ul class="footer-links">
+      <li><a href="https://ictsciencerekha.blogspot.com/p/useful-online-ict-platforms.html" target="_blank">DSSSB PRT / Assistant Teacher</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/p/mygov-platform-pledge.html" target="_blank">KVS / NVS Study Material</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/2026/03/study-guide-kvs-nvs-recruitment.html" target="_blank">Principal / VP Tier II</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/p/mygov-platform-pledge.html" target="_blank">EMRS Recruitment</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/p/powerpoint-presentations.html" target="_blank">PowerPoint Presentations</a></li>
+      <li><a href="https://ictsciencerekha.blogspot.com/p/useful-softwares.html" target="_blank">Useful Software</a></li>
+    </ul>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2026 NOTESARENA</p>
+    <p>Primary & Secondary Schooling (K-12)</p>
+  </div>
+</footer>
+
+<script>
+  // ---- HAMBURGER MENU ----
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const navLinks     = document.getElementById('navLinks');
+  const overlay      = document.getElementById('mobileOverlay');
+
+  function isDesktop() { return window.innerWidth > 1024; }
+
+  function openMenu() {
+    if (isDesktop()) return;
+    hamburgerBtn.classList.add('open');
+    navLinks.classList.add('open');
+    overlay.classList.add('open');
+    hamburgerBtn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    const firstLink = navLinks.querySelector('a');
+    if (firstLink) firstLink.focus();
+  }
+
+  function closeMenu() {
+    hamburgerBtn.classList.remove('open');
+    navLinks.classList.remove('open');
+    overlay.classList.remove('open');
+    hamburgerBtn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  hamburgerBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navLinks.classList.contains('open') ? closeMenu() : openMenu();
+  });
+
+  overlay.addEventListener('click', closeMenu);
+
+  navLinks.addEventListener('click', (e) => e.stopPropagation());
+
+  document.querySelectorAll('.nav-close-link').forEach(link => {
+    link.addEventListener('click', () => setTimeout(closeMenu, 120));
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeMenu();
+  });
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => { if (isDesktop()) closeMenu(); }, 150);
+  }, { passive: true });
+
+  // ---- SCROLL-TRIGGERED ANIMATIONS ----
+  const STAGGER_GRIDS = ['.subjects-grid', '.tools-grid', '.posts-grid', '.recent-list'];
+
+  const observerOptions = {
+    threshold: 0.08,
+    rootMargin: '0px 0px -40px 0px'
+  };
+
+  const animObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('visible');
+      animObserver.unobserve(entry.target);
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.fade-up').forEach(el => animObserver.observe(el));
+
+  STAGGER_GRIDS.forEach(selector => {
+    document.querySelectorAll(selector).forEach(grid => {
+      animObserver.observe(grid);
+    });
+  });
+
+  // ---- HERO TOOL CARDS: subtle entrance on load ----
+  document.querySelectorAll('.hero-tool-card').forEach((card, i) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(16px)';
+    card.style.transition = `opacity 0.5s cubic-bezier(0.16,1,0.3,1) ${0.2 + i * 0.12}s, transform 0.5s cubic-bezier(0.16,1,0.3,1) ${0.2 + i * 0.12}s`;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      });
+    });
+  });
+
+  // ---- HERO LEFT: staggered entrance ----
+  const heroLeft = document.querySelector('.hero-left');
+  if (heroLeft) {
+    const heroEls = [
+      heroLeft.querySelector('.hero-eyebrow'),
+      heroLeft.querySelector('.hero-title'),
+      heroLeft.querySelector('.hero-sub'),
+      heroLeft.querySelector('.hero-actions'),
+      heroLeft.querySelector('.hero-stats'),
+    ].filter(Boolean);
+
+    heroEls.forEach((el, i) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = `opacity 0.6s cubic-bezier(0.16,1,0.3,1) ${0.1 + i * 0.1}s, transform 0.6s cubic-bezier(0.16,1,0.3,1) ${0.1 + i * 0.1}s`;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }));
+    });
+  }
+</script>
+</body>
+</html>
